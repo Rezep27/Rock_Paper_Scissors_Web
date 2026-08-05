@@ -2,7 +2,7 @@ let humanScore = 0;
 let computerScore = 0;
 
 function getComputerChoice(){
-    let choice = 3 * Math.random();
+    let choice = 3 * Math.random(); 
     if (choice < 1){
         return "rock";
     }
@@ -12,11 +12,6 @@ function getComputerChoice(){
     else{
         return "scissors";
     }
-}
-
-function getHumanChoice(){
-    let choice = prompt("Insert your choice: ").toLowerCase();
-    return choice;
 }
 
 function playRound(humanChoice, computerChoice){
@@ -76,4 +71,51 @@ function playRound(humanChoice, computerChoice){
             break;
     }
 }
+
+let playButton = document.querySelector("#play-button");
+let mainContainer = document.querySelector('#main-container');
+
+function spawnBoxes(){
+  let rockBox = document.createElement('div');
+  let paperBox = document.createElement('div');
+  let scissorBox = document.createElement('div');
+
+  let rockImage = document.createElement('img');
+  let paperImage = document.createElement('img');
+  let scissorImage = document.createElement('img');
+
+  let rockText = document.createElement('h3');
+  let paperText = document.createElement('h3');
+  let scissorText = document.createElement('h3');
+
+  rockBox.id = 'rock-box';
+  paperBox.id = 'paper-box';
+  scissorBox.id = 'scissor-box';
+
+  rockBox.classList.add('choice-container');
+  paperBox.classList.add('choice-container');
+  scissorBox.classList.add('choice-container');
+
+  rockText.textContent = "Rock";
+  paperText.textContent = "Paper";
+  scissorText.textContent = "Scissors";
+
+  rockBox.appendChild(rockImage);
+  rockBox.appendChild(rockText);
+
+  paperBox.appendChild(paperImage);
+  paperBox.appendChild(paperText);
+  
+  scissorBox.appendChild(rockImage);
+  scissorBox.appendChild(scissorText);
+
+  mainContainer.removeChild(playButton);
+
+  mainContainer.appendChild(rockBox);
+  mainContainer.appendChild(paperBox);
+  mainContainer.appendChild(scissorBox);
+
+  mainContainer.style.setProperty('gap', '30px');
+}
+playButton.addEventListener('click', spawnBoxes)
 
