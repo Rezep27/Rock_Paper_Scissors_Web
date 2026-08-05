@@ -72,10 +72,32 @@ function playRound(humanChoice, computerChoice){
     }
 }
 
+function chooseOption(event){
+
+    let playerChose = new CustomEvent('decisionMade', {detail:{}})
+    
+    if (event.target.closest('#rock-box')){
+        console.log('Chose rock');
+        mainContainer.dispatchEvent(playerChose)
+    }
+    else if (event.target.closest('#paper-box')){
+        console.log('Chose paper');
+    }
+    else if (event.target.closest('#scissor-box')){
+        console.log('Chose scissors');
+    }
+    else{
+        console.log('Chose nothing');
+    }
+}
+
 let playButton = document.querySelector("#play-button");
 let mainContainer = document.querySelector('#main-container');
 
+
 function spawnBoxes(){
+    mainContainer.removeChild(playButton);
+
   let rockBox = document.createElement('div');
   let paperBox = document.createElement('div');
   let scissorBox = document.createElement('div');
@@ -121,13 +143,14 @@ function spawnBoxes(){
   paperImage.src = 'paper.png';
   scissorImage.src = 'scissors.png';
 
-  mainContainer.removeChild(playButton);
-
   mainContainer.appendChild(rockBox);
   mainContainer.appendChild(paperBox);
   mainContainer.appendChild(scissorBox);
 
   mainContainer.style.setProperty('gap', '30px');
+
+  mainContainer.addEventListener('click', chooseOption);
 }
-playButton.addEventListener('click', spawnBoxes)
+
+playButton.addEventListener('click', spawnBoxes);
 
