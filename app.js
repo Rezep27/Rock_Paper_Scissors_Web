@@ -73,84 +73,116 @@ function playRound(humanChoice, computerChoice){
 }
 
 function chooseOption(event){
-
-    let playerChose = new CustomEvent('decisionMade', {detail:{}})
     
+    let choice = '';
     if (event.target.closest('#rock-box')){
-        console.log('Chose rock');
-        mainContainer.dispatchEvent(playerChose)
+        choice = 'rock'
     }
     else if (event.target.closest('#paper-box')){
-        console.log('Chose paper');
+        choice = 'paper';
     }
     else if (event.target.closest('#scissor-box')){
-        console.log('Chose scissors');
+        choice = 'scissors';
     }
     else{
         console.log('Chose nothing');
     }
+
+    if (choice){
+        fireChoiceEvent(choice);
+    } 
 }
 
-let playButton = document.querySelector("#play-button");
-let mainContainer = document.querySelector('#main-container');
+function fireChoiceEvent(selectedOpt){
+    let playerChose = new CustomEvent('decisionMade', {detail:{
+        choice: selectedOpt
+    }})
+
+    window.dispatchEvent(playerChose);
+}
 
 
 function spawnBoxes(){
     mainContainer.removeChild(playButton);
 
-  let rockBox = document.createElement('div');
-  let paperBox = document.createElement('div');
-  let scissorBox = document.createElement('div');
-
-  let rockImageContainer = document.createElement('div');
-  let paperImageContainer = document.createElement('div');
-  let scissorImageContainer = document.createElement('div');
-
-  let rockImage = document.createElement('img');
-  let paperImage = document.createElement('img');
-  let scissorImage = document.createElement('img');
-
-  let rockText = document.createElement('h3');
-  let paperText = document.createElement('h3');
-  let scissorText = document.createElement('h3');
-
-  rockBox.id = 'rock-box';
-  paperBox.id = 'paper-box';
-  scissorBox.id = 'scissor-box';
-
-  rockBox.classList.add('choice-container');
-  paperBox.classList.add('choice-container');
-  scissorBox.classList.add('choice-container');
-
-  rockText.textContent = "Rock";
-  paperText.textContent = "Paper";
-  scissorText.textContent = "Scissors";
-
-  rockImageContainer.appendChild(rockImage);
-  paperImageContainer.appendChild(paperImage);
-  scissorImageContainer.appendChild(scissorImage);
-
-  rockBox.appendChild(rockImageContainer);
-  rockBox.appendChild(rockText);
-
-  paperBox.appendChild(paperImageContainer);
-  paperBox.appendChild(paperText);
-  
-  scissorBox.appendChild(scissorImageContainer);
-  scissorBox.appendChild(scissorText);
-
-  rockImage.src = 'rock.png';
-  paperImage.src = 'paper.png';
-  scissorImage.src = 'scissors.png';
-
-  mainContainer.appendChild(rockBox);
-  mainContainer.appendChild(paperBox);
-  mainContainer.appendChild(scissorBox);
+    spawnCard('rock');
+    spawnCard('paper');
+    spawnCard('scissor');
 
   mainContainer.style.setProperty('gap', '30px');
 
   mainContainer.addEventListener('click', chooseOption);
 }
 
+function spawnCard(cardType){
+    let id;
+    let textCont;
+    let imgSrc;
+    switch (cardType){
+        case 'rock':
+            id = 'rock-box';
+            textCont = 'Rock';
+            imgSrc = 'rock.png';
+            break;
+        case 'paper':
+            id = 'paper-box';
+            textCont = 'Paper';
+            imgSrc = 'paper.png';
+            break;
+        case 'scissor':
+            id = 'scissor-box';
+            textCont = 'Scissors';
+            imgSrc = 'scissors.png';
+            break;
+        default:
+            break;
+    }
+
+    let box = document.createElement('div');
+    let imageContainer = document.createElement('div');
+    let image = document.createElement('img');
+    let text = document.createElement('h3');
+
+    box.id = id;
+    box.classList.add('choice-container');
+
+    text.textContent = textCont;
+
+    imageContainer.appendChild(image);
+
+    box.appendChild(imageContainer);
+    box.appendChild(text);
+
+    image.src = imgSrc;
+    mainContainer.appendChild(box);
+
+}
+
+function despawnSpareCards(chosenCard){
+    let card1;
+    let card2;
+    switch (chosenCard){
+        case 'rock':
+            card1 = document.querySelector('#paper-box');
+            card2 = document.querySelector('#scissor-box');
+
+            card1.remove()
+            card2.remove()
+
+            break;
+    }
+}
+
+let playButton = document.querySelector("#play-button");
+let mainContainer = document.querySelector('#main-container');
 playButton.addEventListener('click', spawnBoxes);
+
+window.addEventListener('decisionMade', (event) => {
+    let computerChoice = getComputerChoice()
+    let playerChoice = event.detail.choice;
+
+    despawnSpareCards(playerChoice);
+
+    playRound(playerChoice, computerChoice);
+})
 
