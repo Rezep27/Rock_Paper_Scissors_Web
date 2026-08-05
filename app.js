@@ -80,6 +80,10 @@ function spawnBoxes(){
   let paperBox = document.createElement('div');
   let scissorBox = document.createElement('div');
 
+  let rockImageContainer = document.createElement('div');
+  let paperImageContainer = document.createElement('div');
+  let scissorImageContainer = document.createElement('div');
+
   let rockImage = document.createElement('img');
   let paperImage = document.createElement('img');
   let scissorImage = document.createElement('img');
@@ -100,14 +104,22 @@ function spawnBoxes(){
   paperText.textContent = "Paper";
   scissorText.textContent = "Scissors";
 
-  rockBox.appendChild(rockImage);
+  rockImageContainer.appendChild(rockImage);
+  paperImageContainer.appendChild(paperImage);
+  scissorImageContainer.appendChild(scissorImage);
+
+  rockBox.appendChild(rockImageContainer);
   rockBox.appendChild(rockText);
 
-  paperBox.appendChild(paperImage);
+  paperBox.appendChild(paperImageContainer);
   paperBox.appendChild(paperText);
   
-  scissorBox.appendChild(rockImage);
+  scissorBox.appendChild(scissorImageContainer);
   scissorBox.appendChild(scissorText);
+
+  rockImage.src = 'rock.png';
+  paperImage.src = 'paper.png';
+  scissorImage.src = 'scissors.png';
 
   mainContainer.removeChild(playButton);
 

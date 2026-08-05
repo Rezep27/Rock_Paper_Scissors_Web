@@ -29,7 +29,15 @@ body{
 }
 
 .choice-container{
+  color: white;
   display: flex;
+  flex-direction: column;
   width: 300px;
-  height: 500px;
+  height: 300px;
+}
+
+.choice-container div img{
+  max-width: 200px;
+  width: 100%;
+  height: auto;
 }
