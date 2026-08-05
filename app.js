@@ -10,7 +10,7 @@ function getComputerChoice(){
         return "paper";
     }
     else{
-        return "scissors";
+        return "scissor";
     }
 }
 
@@ -24,7 +24,7 @@ function playRound(humanChoice, computerChoice){
             else if (computerChoice === "paper"){
                 victory = "robot";
             }
-            else if (computerChoice === "scissors"){
+            else if (computerChoice === "scissor"){
                 victory = "human";
             }
             break;
@@ -35,18 +35,18 @@ function playRound(humanChoice, computerChoice){
             else if (computerChoice === "paper"){
                 victory = "tie";
             }
-            else if (computerChoice === "scissors"){
+            else if (computerChoice === "scissor"){
                 victory = "robot";
             }
             break;
-        case "scissors":
+        case "scissor":
             if (computerChoice === "rock"){
                 victory = "robot";
             }
             else if (computerChoice === "paper"){
                 victory = "human";
             }
-            else if (computerChoice === "scissors"){
+            else if (computerChoice === "scissor"){
                 victory = "tie";
             }
             break;
@@ -82,7 +82,7 @@ function chooseOption(event){
         choice = 'paper';
     }
     else if (event.target.closest('#scissor-box')){
-        choice = 'scissors';
+        choice = 'scissor';
     }
     else{
         console.log('Chose nothing');
@@ -103,6 +103,7 @@ function fireChoiceEvent(selectedOpt){
 
 
 function spawnBoxes(){
+
     mainContainer.removeChild(playButton);
 
     spawnCard('rock');
@@ -114,23 +115,28 @@ function spawnBoxes(){
   mainContainer.addEventListener('click', chooseOption);
 }
 
-function spawnCard(cardType){
+function spawnCard(cardType, isRobot = false;){
     let id;
     let textCont;
     let imgSrc;
+    let robotId = '';
+
+    if (isRobot){
+        robotId = 1;
+    }
     switch (cardType){
         case 'rock':
-            id = 'rock-box';
+            id = `rock-box${robotId}`;
             textCont = 'Rock';
             imgSrc = 'rock.png';
             break;
         case 'paper':
-            id = 'paper-box';
+            id = `paper-box${robotId}`;
             textCont = 'Paper';
             imgSrc = 'paper.png';
             break;
         case 'scissor':
-            id = 'scissor-box';
+            id = `scissor-box${robotId}`;
             textCont = 'Scissors';
             imgSrc = 'scissors.png';
             break;
@@ -158,19 +164,31 @@ function spawnCard(cardType){
 
 }
 
-function despawnSpareCards(chosenCard){
-    let card1;
-    let card2;
+function despawnSpareCards(chosenCard, playerChoice = '', robotChoice = ''){
+    let card1Name;
+    let card2Name;
+
     switch (chosenCard){
         case 'rock':
-            card1 = document.querySelector('#paper-box');
-            card2 = document.querySelector('#scissor-box');
-
-            card1.remove()
-            card2.remove()
-
+            card1Name = '#paper-box';
+            card2Name = '#scissor-box';
             break;
+        case 'paper':
+            card1Name = '#rock-box';
+            card2Name = '#scissor-box';
+            break;
+        case 'scissor':
+            card1Name = '#paper-box';
+            card2Name = '#rock-box';
+            break;   
+        case '':
+            card1Name = `#${playerChoice}-box`;
+            card2Name = `#${robotChoice}-box1`;
+
     }
+
+    document.querySelector(card1Name).remove();
+    document.querySelector(card2Name).remove();
 }
 
 let playButton = document.querySelector("#play-button");
