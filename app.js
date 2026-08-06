@@ -106,16 +106,16 @@ function spawnBoxes(){
 
     mainContainer.removeChild(playButton);
 
-    spawnCard('rock');
-    spawnCard('paper');
-    spawnCard('scissor');
+    spawnCard('rock', mainContainer);
+    spawnCard('paper', mainContainer);
+    spawnCard('scissor', mainContainer);
 
   mainContainer.style.setProperty('gap', '30px');
 
   mainContainer.addEventListener('click', chooseOption);
 }
 
-function spawnCard(cardType, isRobot = false;){
+function spawnCard(cardType, container, isRobot = false){
     let id;
     let textCont;
     let imgSrc;
@@ -160,7 +160,7 @@ function spawnCard(cardType, isRobot = false;){
     box.appendChild(text);
 
     image.src = imgSrc;
-    mainContainer.appendChild(box);
+    container.appendChild(box);
 
 }
 
@@ -191,16 +191,44 @@ function despawnSpareCards(chosenCard, playerChoice = '', robotChoice = ''){
     document.querySelector(card2Name).remove();
 }
 
+function setGameStage(playerChoice, computerChoice){
+
+  despawnSpareCards(playerChoice);
+
+  let computerContainer = document.createElement('div');
+  
+  computerContainer.id = 'computer-container';
+  computerContainer.style.flexGrow = "0";
+
+  gameContainer.appendChild(computerContainer);   
+
+  requestAnimationFrame(() => {
+    computerContainer.style.flexGrow = "1";
+  })
+  waitSleep(500);
+
+  spawnCard(computerChoice, computerContainer, true);
+
+}
+
+async function waitSleep(amount) {
+  await sleep(amount);
+}
+
 let playButton = document.querySelector("#play-button");
 let mainContainer = document.querySelector('#main-container');
+let gameContainer = document.querySelector("#game-container");
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 playButton.addEventListener('click', spawnBoxes);
 
 window.addEventListener('decisionMade', (event) => {
     let computerChoice = getComputerChoice()
     let playerChoice = event.detail.choice;
 
-    despawnSpareCards(playerChoice);
-
+    setGameStage(playerChoice, computerChoice);
     playRound(playerChoice, computerChoice);
 })
+
+
 
