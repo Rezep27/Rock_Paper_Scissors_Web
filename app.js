@@ -1,6 +1,3 @@
-let humanScore = 0;
-let computerScore = 0;
-
 function getComputerChoice(){
     let choice = 3 * Math.random(); 
     if (choice < 1){
@@ -54,22 +51,7 @@ function playRound(humanChoice, computerChoice){
             break;
     }
 
-    switch (victory){
-        case "robot":
-            console.log("Robot wins!");
-            computerScore += 1;
-            break;
-        case "human":
-            console.log("Human wins!");
-            humanScore += 1;
-            break;
-        case "tie":
-            console.log("It is a tie!");
-            break;
-        default:
-            console.log("Robot wins!");
-            break;
-    }
+    return victory;
 }
 
 function chooseOption(event){
@@ -104,13 +86,13 @@ function fireChoiceEvent(selectedOpt){
 
 function spawnBoxes(){
 
-    mainContainer.removeChild(playButton);
+    if (playButton.isConnected){
+        mainContainer.removeChild(playButton);
+    }
 
     spawnCard('rock', mainContainer);
     spawnCard('paper', mainContainer);
     spawnCard('scissor', mainContainer);
-
-  mainContainer.style.setProperty('gap', '30px');
 
   mainContainer.addEventListener('click', chooseOption);
 }
@@ -205,29 +187,123 @@ function setGameStage(playerChoice, computerChoice){
   requestAnimationFrame(() => {
     computerContainer.style.flexGrow = "1";
   })
-  waitSleep(500);
 
   spawnCard(computerChoice, computerContainer, true);
 
+}
+
+function setContainerTitles(){
+    let computerContainer = document.querySelector('#computer-container');
+    let playerContainer = document.querySelector('#main-container');
+
+    let computerTitle = document.createElement('h2');
+    let playerTitle = document.createElement('h2');
+
+    computerContainer.style.flexDirection = 'column';
+    playerContainer.style.flexDirection = 'column';
+
+    computerTitle.textContent = 'Computer';
+    playerTitle.textContent = 'Player';
+
+    computerContainer.insertBefore(computerTitle, computerContainer.firstChild);
+    playerContainer.insertBefore(playerTitle, playerContainer.firstChild);
+}
+
+function removeContainerTitles(){
+    let computerContainer = document.querySelector('#computer-container');
+    let playerContainer = document.querySelector('#main-container');
+
+    let computerTitle = computerContainer.querySelector('h2');
+    let playerTitle = playerContainer.querySelector('h2');
+
+    computerContainer.removeChild(computerTitle);
+    playerContainer.removeChild(playerTitle);
+
+    computerContainer.style.flexDirection = 'row';
+    playerContainer.style.flexDirection = 'row';
+}
+
+function setWinner(winner){
+    let title = document.querySelector('.title-container > h1');
+    let text = '';
+
+    switch (winner){
+        case "robot":
+            text ="Robot wins!";
+            computerScore += 1;
+            break;
+        case "human":
+            text = "Player wins!";
+            humanScore += 1;
+            break;
+        case "tie":
+            text = "It is a tie!";
+            break;
+    }
+
+    title.textContent = text;
 }
 
 async function waitSleep(amount) {
   await sleep(amount);
 }
 
+
+function startNewRound(){
+
+    if (humanScore === 5 || computerScore === 5){
+        let title = document.querySelector('.title-container > h1');
+        if (humanScore === 5){
+            title.textContent = "Player wins the game!";
+        }
+        else{
+            title.textContent = "Robot wins the game!";
+        }
+        return;
+    }
+    let computerContainer = document.querySelector('#computer-container');
+    if (!computerContainer){
+        spawnBoxes();
+    }
+    else{
+        computerContainer.remove();
+        spawnBoxes();
+    }
+}
+
+function resetRound(){
+    let event = new CustomEvent('roundReset');
+    window.dispatchEvent(event);
+}
+
 let playButton = document.querySelector("#play-button");
 let mainContainer = document.querySelector('#main-container');
 let gameContainer = document.querySelector("#game-container");
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+let humanScore = 0;
+let computerScore = 0;
+
 
 playButton.addEventListener('click', spawnBoxes);
 
-window.addEventListener('decisionMade', (event) => {
+window.addEventListener('decisionMade', async (event) => {
     let computerChoice = getComputerChoice()
     let playerChoice = event.detail.choice;
 
     setGameStage(playerChoice, computerChoice);
-    playRound(playerChoice, computerChoice);
+    setContainerTitles();
+    let victory = playRound(playerChoice, computerChoice);
+    setWinner(victory);
+
+    await waitSleep(2000);
+
+    despawnSpareCards('', playerChoice, computerChoice);
+    removeContainerTitles();
+    resetRound();
+})
+
+window.addEventListener('roundReset', () => {
+    startNewRound();
 })
 
 

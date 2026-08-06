@@ -30,6 +30,7 @@ body{
   align-items: center;
   flex-grow: 1;
   transition: flex-grow 500ms linear;
+  gap: 30px;
 }
 
 #computer-container{
